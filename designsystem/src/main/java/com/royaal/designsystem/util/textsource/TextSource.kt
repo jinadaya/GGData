@@ -15,6 +15,7 @@ import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import com.royaal.designsystem.theme.AppTheme
+import com.royaal.designsystem.theme.linkColors
 
 /**
  *  Wrapper around any [CharSequence].
@@ -123,7 +124,7 @@ class HtmlTextSource(
         )
 
     override val charValue: String = htmlText
-        .replace('\u2028','\n')
+        .replace('\u2028', '\n')
         .replace("\n", "<br>")
 }
 

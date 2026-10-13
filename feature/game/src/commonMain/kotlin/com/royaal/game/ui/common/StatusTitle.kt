@@ -8,10 +8,18 @@ import ggdata.feature.game.generated.resources.statusDropped
 import ggdata.feature.game.generated.resources.statusPlaying
 import org.jetbrains.compose.resources.StringResource
 
-internal val GamePlayStatus.title: StringResource
+val GamePlayStatus.title: StringResource
     get() = when (this) {
         GamePlayStatus.BACKLOG -> Res.string.statusBacklog
         GamePlayStatus.PLAYING -> Res.string.statusPlaying
         GamePlayStatus.COMPLETED -> Res.string.statusCompleted
         GamePlayStatus.DROPPED -> Res.string.statusDropped
     }
+
+/** The order a game goes through them, as the journal lists them: playing first. */
+val JournalStatuses: List<GamePlayStatus> = listOf(
+    GamePlayStatus.PLAYING,
+    GamePlayStatus.BACKLOG,
+    GamePlayStatus.COMPLETED,
+    GamePlayStatus.DROPPED,
+)

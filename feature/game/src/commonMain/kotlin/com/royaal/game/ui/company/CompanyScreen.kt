@@ -42,6 +42,7 @@ import com.royaal.designsystem.uikit.GameCard
 import com.royaal.designsystem.uikit.GameCardType
 import com.royaal.designsystem.uikit.SkeletonGameCard
 import com.royaal.designsystem.util.BasePreview
+import com.royaal.designsystem.util.animatedItem
 import com.royaal.entities.ui.UiGame
 import com.royaal.entities.ui.testGame
 import com.royaal.game.domain.CompanyDetails
@@ -116,7 +117,7 @@ private fun CompanyContent(
         ),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        item(key = "back") {
+        animatedItem(key = "back") {
             GGIconButton(
                 imageVector = AppIcons.arrowBack,
                 type = GGIconButtonType.FLATTENED,
@@ -126,7 +127,7 @@ private fun CompanyContent(
         val company = state.company
         when {
             shimmer != null -> {
-                item(key = "headerSkeleton") {
+                animatedItem(key = "headerSkeleton") {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         SkeletonText(AppTheme.typography.headlineLarge, Modifier.fillMaxWidth(0.6f), shimmer = shimmer)
                         SkeletonText(AppTheme.typography.bodyMedium, Modifier.fillMaxWidth(), lines = 3, shimmer = shimmer)
@@ -134,14 +135,16 @@ private fun CompanyContent(
                 }
                 items(count = SKELETON_GAMES_COUNT, key = { "skeleton$it" }) {
                     SkeletonGameCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItem(),
                         type = GameCardType.Compact,
                         shimmer = shimmer,
                     )
                 }
             }
 
-            state.isLoadFailed || company == null -> item(key = "failed") {
+            state.isLoadFailed || company == null -> animatedItem(key = "failed") {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = stringResource(Res.string.companyLoadFailed),
@@ -157,10 +160,10 @@ private fun CompanyContent(
             }
 
             else -> {
-                item(key = "header") {
+                animatedItem(key = "header") {
                     Header(company)
                 }
-                item(key = "gamesTitle") {
+                animatedItem(key = "gamesTitle") {
                     Text(
                         modifier = Modifier.padding(top = 16.dp),
                         text = stringResource(Res.string.developedGames),
@@ -168,7 +171,7 @@ private fun CompanyContent(
                     )
                 }
                 if (state.games.isEmpty()) {
-                    item(key = "noGames") {
+                    animatedItem(key = "noGames") {
                         Text(
                             text = stringResource(Res.string.noGames),
                             style = AppTheme.typography.bodyMedium,
@@ -178,7 +181,9 @@ private fun CompanyContent(
                 }
                 items(items = state.games, key = { it.id }) { game ->
                     GameCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateItem(),
                         game = game,
                         type = GameCardType.Compact,
                         onClick = onGameClicked,

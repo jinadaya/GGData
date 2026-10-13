@@ -13,16 +13,6 @@
     <string name="save">Save</string>
     <string name="saved">%1$s saved to your library</string>
 
-    <!-- Journal entry -->
-    <string name="journalTitle">Journal entry</string>
-    <string name="journalHours">Hours played</string>
-    <string name="journalHoursHint">e.g. 40</string>
-    <string name="journalHoursInvalid">A whole number of hours, please.</string>
-    <string name="journalRating">Your rating</string>
-    <string name="journalNote">Note</string>
-    <string name="journalNoteHint">What stayed with you?</string>
-    <string name="journalSaved">%1$s saved to your journal</string>
-
     <!-- Game -->
     <string name="addToLibrary">Add to library</string>
     <string name="editInLibrary">In library · %1$s</string>
@@ -35,11 +25,6 @@
     <string name="statFavourite">Favourite</string>
     <string name="statFavouriteYes">Yes</string>
     <string name="statCollections">In collections</string>
-    <string name="statHours">Hours played</string>
-    <string name="statRating">Your rating</string>
-    <string name="statRatingValue">%1$d/10</string>
-    <string name="statNote">Note</string>
-    <string name="edit">Edit</string>
     <string name="about">About</string>
     <string name="factTimeToBeat">Time to beat</string>
     <string name="factPlayers">Players</string>
@@ -49,8 +34,6 @@
     <string name="moreFrom">More from %1$s</string>
     <string name="similar">Similar games</string>
     <string name="seeAll">See all</string>
-    <string name="screenshots">Screenshots</string>
-    <string name="screenshotCounter">%1$d / %2$d</string>
     <string name="loadFailed">Couldn't load the game. Check your connection.</string>
     <string name="retry">Retry</string>
 

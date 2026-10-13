@@ -59,7 +59,6 @@ kotlin {
             implementation(project(":feature:search"))
             implementation(project(":feature:collections"))
             implementation(project(":feature:game"))
-            implementation(project(":feature:journal"))
         }
 
         androidMain.dependencies {

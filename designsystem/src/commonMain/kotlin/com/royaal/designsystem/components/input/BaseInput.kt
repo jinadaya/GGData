@@ -53,8 +53,6 @@ private val colorAnimationSpec: AnimationSpec<Color> = tween(durationMillis = 15
 
 /**
  * @param keyboardOptions the action key is `Done` by default; use `Next` to chain fields of a form.
- * @param lineLimits single line by default. In a multi-line field Enter inserts a line break
- *   instead of the action.
  * @param onImeAction called on the keyboard's action key, before focus moves on or is cleared
  *   (which hides the keyboard), see [rememberImeActionHandler].
  */
@@ -68,7 +66,6 @@ fun GGInput(
     enabled: Boolean = true,
     modifier: Modifier = Modifier,
     keyboardOptions: KeyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-    lineLimits: TextFieldLineLimits = TextFieldLineLimits.SingleLine,
     onImeAction: (() -> Unit)? = null,
     onValueChanged: (String) -> Unit,
 ) {
@@ -136,7 +133,8 @@ fun GGInput(
             enabled = enabled,
             textStyle = textStyle.copy(color = textColor.value),
             cursorBrush = SolidColor(textColor.value),
-            lineLimits = lineLimits,
+            // Single line: in a multi-line field Enter inserts a line break instead of the action.
+            lineLimits = TextFieldLineLimits.SingleLine,
             keyboardOptions = keyboardOptions,
             onKeyboardAction = rememberImeActionHandler(keyboardOptions.imeAction, onImeAction),
             modifier = Modifier
@@ -163,12 +161,7 @@ fun GGInput(
                             )
                         }
                         .padding(baseInputContentPadding),
-                    // A multi-line field grows down from the first line, where the hint is.
-                    contentAlignment = if (lineLimits == TextFieldLineLimits.SingleLine) {
-                        Alignment.CenterStart
-                    } else {
-                        Alignment.TopStart
-                    },
+                    contentAlignment = Alignment.CenterStart,
                 ) {
                     if (derivedStateOf { state.text.isEmpty() }.value && hint != null) {
                         Text(

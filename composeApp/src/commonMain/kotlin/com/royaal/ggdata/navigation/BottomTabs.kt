@@ -6,8 +6,8 @@ import com.royaal.collections.navigation.CollectionRoute
 import com.royaal.collections.navigation.CollectionsRoute
 import com.royaal.designsystem.components.BottomBarEntry
 import com.royaal.designsystem.icons.AppIcons
-import com.royaal.journal.navigation.JournalRoute
 import com.royaal.main.navigation.MainRoute
+import com.royaal.search.navigation.SearchRoute
 
 internal class BottomTab(
     val route: NavKey,
@@ -20,7 +20,7 @@ internal class BottomTab(
 /** Bottom navigation tabs, in display order. The first one is the start tab. */
 internal val bottomTabs: List<BottomTab> = listOf(
     BottomTab(route = MainRoute, title = "Home", icon = AppIcons.home),
-    BottomTab(route = JournalRoute, title = "Journal", icon = AppIcons.journal),
+    BottomTab(route = SearchRoute, title = "Search", icon = AppIcons.search),
     BottomTab(route = CollectionsRoute, title = "Collections", icon = AppIcons.collections)
 )
 

@@ -18,15 +18,3 @@ internal data class LibraryCollection(
     val name: String,
     val containsGame: Boolean,
 )
-
-/**
- * What the user keeps on a game in their journal: what the journal entry sheet shows and edits.
- *
- * @param rating the user's own, 1 to 10.
- */
-internal data class JournalEntry(
-    val status: GamePlayStatus?,
-    val hoursPlayed: Int?,
-    val rating: Int?,
-    val note: String?,
-)

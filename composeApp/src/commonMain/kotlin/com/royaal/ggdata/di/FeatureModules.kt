@@ -2,7 +2,6 @@ package com.royaal.ggdata.di
 
 import com.royaal.collections.di.collectionsModule
 import com.royaal.game.di.gameModule
-import com.royaal.journal.di.journalModule
 import com.royaal.main.di.mainModule
 import com.royaal.search.di.searchModule
 import org.koin.core.module.Module
@@ -13,5 +12,4 @@ internal val featureModules: List<Module> = listOf(
     searchModule,
     collectionsModule,
     gameModule,
-    journalModule,
 )

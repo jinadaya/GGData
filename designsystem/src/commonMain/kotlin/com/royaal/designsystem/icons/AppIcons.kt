@@ -345,7 +345,7 @@ object AppIcons {
                             strokeLineCap = StrokeCap.Butt,
                             strokeLineJoin = StrokeJoin.Bevel,
                             strokeLineMiter = 1f,
-                            pathFillType = PathFillType.NonZero,
+                            pathFillType = PathFillType.Companion.NonZero,
                         ) {
                             moveTo(6f, 19f)
                             lineTo(9f, 19f)
@@ -400,26 +400,6 @@ object AppIcons {
             "collections",
             "M9.17,6l2,2H20v10H4V6h5.17M10,4H4c-1.1,0 -1.99,0.9 -1.99,2L2,18c0,1.1 0.9,2 2,2h16" +
                 "c1.1,0 2,-0.9 2,-2V8c0,-1.1 -0.9,-2 -2,-2h-8l-2,-2z",
-        )
-    }
-
-    val edit: ImageVector by lazy {
-        materialIcon(
-            "edit",
-            "M3,17.25V21h3.75L17.81,9.94l-3.75,-3.75L3,17.25zM20.71,7.04c0.39,-0.39 0.39,-1.02 0,-1.41" +
-                "l-2.34,-2.34c-0.39,-0.39 -1.02,-0.39 -1.41,0l-1.83,1.83 3.75,3.75 1.83,-1.83z",
-        )
-    }
-
-    val dragHandle: ImageVector by lazy {
-        materialIcon("dragHandle", "M20,9H4v2h16V9zM4,15h16v-2H4v2z")
-    }
-
-    val journal: ImageVector by lazy {
-        materialIcon(
-            "journal",
-            "M18,2H6c-1.1,0 -2,0.9 -2,2v16c0,1.1 0.9,2 2,2h12c1.1,0 2,-0.9 2,-2V4c0,-1.1 -0.9,-2 -2,-2z" +
-                "M9,4h2v5l-1,-0.75L9,9V4zM18,20H6V4h1v9l3,-2.25L13,13V4h5v16z",
         )
     }
 

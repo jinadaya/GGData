@@ -113,7 +113,6 @@ internal class GameViewModel(
         developer = developer,
         publisher = publisher?.takeIf { it.id != developer?.id },
         heroImageUrl = heroImageUrl,
-        screenshots = screenshots,
         seriesName = seriesName,
         isComplete = isComplete,
     )
@@ -128,9 +127,6 @@ internal class GameViewModel(
         },
         favourite = favourite,
         collections = collections,
-        hoursPlayed = hoursPlayed,
-        rating = rating,
-        note = note,
     )
 
     private companion object {

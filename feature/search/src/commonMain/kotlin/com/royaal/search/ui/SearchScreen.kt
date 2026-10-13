@@ -1,10 +1,8 @@
 package com.royaal.search.ui
 
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,22 +14,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.royaal.designsystem.components.button.GGIconButton
-import com.royaal.designsystem.components.button.GGIconButtonType
 import com.royaal.designsystem.components.input.GGSearchInput
 import com.royaal.designsystem.components.screen.LocalContentPadding
 import com.royaal.designsystem.components.skeleton.rememberSkeletonShimmer
@@ -71,7 +63,6 @@ internal fun SearchScreen() {
 
     SearchContent(
         state = state.value,
-        onBackClicked = navigator::back,
         onQueryChanged = { viewModel.sendEvent(SearchUserEvent.QueryChanged(it)) },
         onGameClicked = { navigator.navigate(GameRoute(it.id)) },
         onAddGameClicked = { addingGameId = it.id },
@@ -89,7 +80,6 @@ internal fun SearchScreen() {
 @Composable
 private fun SearchContent(
     state: SearchScreenState,
-    onBackClicked: () -> Unit,
     onQueryChanged: (String) -> Unit,
     onGameClicked: (UiGame) -> Unit,
     onAddGameClicked: (UiGame) -> Unit,
@@ -107,37 +97,17 @@ private fun SearchContent(
             .clearFocusOnScroll(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        // Opened to type: the keyboard comes up at once, but not again on coming back from a game.
-        val focusRequester = remember { FocusRequester() }
-        var isFocusRequested by rememberSaveable { mutableStateOf(false) }
-        LaunchedEffect(Unit) {
-            if (!isFocusRequested) {
-                isFocusRequested = true
-                focusRequester.requestFocus()
-            }
-        }
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            GGIconButton(
-                imageVector = AppIcons.arrowBack,
-                type = GGIconButtonType.OUTLINED,
-                onClick = onBackClicked,
-            )
-            GGSearchInput(
-                modifier = Modifier
-                    .weight(1f)
-                    .focusRequester(focusRequester),
-                initialValue = state.query,
-                hint = stringResource(Res.string.searchHint),
-                loading = state.isLoading,
-                subtitle = if (state.isRemoteFailed) stringResource(Res.string.remoteSearchFailed) else null,
-                onSearchClicked = {},
-                onValueChanged = onQueryChanged,
-            )
-        }
+        GGSearchInput(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            initialValue = state.query,
+            hint = stringResource(Res.string.searchHint),
+            loading = state.isLoading,
+            subtitle = if (state.isRemoteFailed) stringResource(Res.string.remoteSearchFailed) else null,
+            onSearchClicked = {},
+            onValueChanged = onQueryChanged,
+        )
         if (state.isNothingFound) {
             Text(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -146,43 +116,31 @@ private fun SearchContent(
                 color = AppTheme.textColors.secondary,
             )
         }
-        // Typing the first letters, the hint gives way to the results smoothly, and back on clearing.
-        Crossfade(
-            modifier = Modifier.weight(1f),
-            targetState = state.isIdle,
-            label = "SearchIdle",
-        ) { isIdle ->
-            if (isIdle) {
-                SearchEmptyState(modifier = Modifier.fillMaxSize())
-                return@Crossfade
-            }
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                contentPadding = LocalContentPadding.current + PaddingValues(horizontal = 16.dp),
-            ) {
-                if (shimmer != null) {
-                    items(count = SKELETON_RESULTS_COUNT, key = { "skeleton$it" }) {
-                        SkeletonGameCard(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .animateItem(),
-                            type = GameCardType.Compact,
-                            shimmer = shimmer,
-                        )
-                    }
-                }
-                items(items = state.games, key = { it.id }) { game ->
-                    GameCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .animateItem(),
-                        game = game,
+        if (state.isIdle) {
+            SearchEmptyState(modifier = Modifier.weight(1f))
+            return@Column
+        }
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            contentPadding = LocalContentPadding.current + PaddingValues(horizontal = 16.dp),
+        ) {
+            if (shimmer != null) {
+                items(count = SKELETON_RESULTS_COUNT, key = { "skeleton$it" }) {
+                    SkeletonGameCard(
+                        modifier = Modifier.fillMaxWidth(),
                         type = GameCardType.Compact,
-                        onClick = onGameClicked,
-                        onAddClicked = onAddGameClicked,
+                        shimmer = shimmer,
                     )
                 }
+            }
+            items(items = state.games, key = { it.id }) { game ->
+                GameCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    game = game,
+                    type = GameCardType.Compact,
+                    onClick = onGameClicked,
+                    onAddClicked = onAddGameClicked,
+                )
             }
         }
     }
@@ -228,21 +186,18 @@ private fun Preview() = BasePreview {
             games = listOf(UiGame.testGame.copy(id = 1), UiGame.testGame.copy(id = 2)),
             isLoading = true,
         ),
-        onBackClicked = {},
         onQueryChanged = {},
         onGameClicked = {},
         onAddGameClicked = {},
     )
     SearchContent(
         state = SearchScreenState(query = "mine", isLoading = true),
-        onBackClicked = {},
         onQueryChanged = {},
         onGameClicked = {},
         onAddGameClicked = {},
     )
     SearchContent(
         state = SearchScreenState(),
-        onBackClicked = {},
         onQueryChanged = {},
         onGameClicked = {},
         onAddGameClicked = {},

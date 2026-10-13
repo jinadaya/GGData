@@ -6,14 +6,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -46,13 +44,11 @@ import com.royaal.designsystem.theme.textColors
 import com.royaal.designsystem.uikit.CollectionCard
 import com.royaal.designsystem.uikit.SkeletonCollectionCard
 import com.royaal.designsystem.util.BasePreview
-import com.royaal.designsystem.util.animatedItem
 import com.royaal.entities.data.GamePlayStatus
 import com.royaal.entities.ui.UiGame
 import com.royaal.entities.ui.UiGameCollection
 import com.royaal.entities.ui.testGame
 import com.royaal.navigation.LocalNavigator
-import com.royaal.search.ui.SearchButton
 import ggdata.feature.collections.generated.resources.Res
 import ggdata.feature.collections.generated.resources.addStatusCollections
 import ggdata.feature.collections.generated.resources.allCollections
@@ -130,7 +126,7 @@ private fun CollectionsContent(
         }
         if (shimmer != null) {
             items(count = SKELETON_CARDS_COUNT, key = { "skeleton$it" }) {
-                Box(modifier = Modifier.animateItem(), contentAlignment = Alignment.Center) {
+                Box(contentAlignment = Alignment.Center) {
                     SkeletonCollectionCard(shimmer = shimmer)
                 }
             }
@@ -160,7 +156,7 @@ private fun CollectionsContent(
 }
 
 private fun LazyGridScope.fullWidthItem(key: String, content: @Composable () -> Unit) {
-    animatedItem(key = key, span = { GridItemSpan(maxLineSpan) }) { content() }
+    item(key = key, span = { GridItemSpan(maxLineSpan) }) { content() }
 }
 
 private fun LazyGridScope.collectionItems(
@@ -169,7 +165,7 @@ private fun LazyGridScope.collectionItems(
 ) {
     items(count = collections.size, key = { collections[it].key.toString() }) { index ->
         val collection = collections[index]
-        Box(modifier = Modifier.animateItem(), contentAlignment = Alignment.Center) {
+        Box(contentAlignment = Alignment.Center) {
             CollectionCard(
                 collection = UiGameCollection(
                     id = (collection.key as? CollectionKey.Custom)?.id ?: -1,
@@ -201,8 +197,6 @@ private fun Header(onCreateClicked: () -> Unit) {
             buttonType = GGButtonType.OUTLINED,
             iconStart = AppIcons.add,
         )
-        Spacer(Modifier.width(8.dp))
-        SearchButton()
     }
 }
 

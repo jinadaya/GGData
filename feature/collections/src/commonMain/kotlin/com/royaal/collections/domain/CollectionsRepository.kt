@@ -40,12 +40,11 @@ internal data class CollectionDetails(
     val games: List<GameData>,
 )
 
-/** What [CollectionsRepository.removeGame] took out, to put it back on undo, where it was. */
+/** What [CollectionsRepository.removeGame] took out, to put it back on undo. */
 internal data class RemovedGame(
     val key: CollectionKey,
     val gameId: Long,
     val addedAt: Long?,
-    val position: Int = 0,
 )
 
 internal interface CollectionsRepository {
@@ -62,11 +61,6 @@ internal interface CollectionsRepository {
     suspend fun addStatusCollections(statuses: List<GamePlayStatus>)
 
     suspend fun setPinned(collectionId: Long, pinned: Boolean)
-
-    suspend fun rename(collectionId: Long, name: String)
-
-    /** Puts a user's collection's games in the order of [gameIds], the first one on top. */
-    suspend fun reorder(collectionId: Long, gameIds: List<Long>)
 
     /** A status collection is only hidden: its games keep their status. */
     suspend fun deleteCollection(collectionId: Long)

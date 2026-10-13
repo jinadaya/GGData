@@ -46,7 +46,6 @@ import com.royaal.designsystem.theme.AppTheme
 import com.royaal.designsystem.theme.TagColors
 import com.royaal.designsystem.theme.TagColorsVariant
 import com.royaal.designsystem.theme.tagColors
-import com.royaal.designsystem.util.horizontalScrollHint
 import com.royaal.designsystem.util.pressScale
 
 enum class GGTagType {
@@ -156,11 +155,9 @@ fun GGTagRow(
     contentPadding: PaddingValues = PaddingValues.Zero,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     Row(
         modifier = modifier
-            .horizontalScrollHint(scrollState)
-            .horizontalScroll(scrollState)
+            .horizontalScroll(rememberScrollState())
             // Inside the scroll: tags scroll edge to edge, but rest aligned with the screen content.
             .padding(contentPadding),
         horizontalArrangement = Arrangement.spacedBy(TagRowSpacing),

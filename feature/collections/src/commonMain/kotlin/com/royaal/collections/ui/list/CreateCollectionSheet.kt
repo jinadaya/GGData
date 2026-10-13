@@ -14,7 +14,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.royaal.collections.ui.common.collectionNameError
+import com.royaal.collections.ui.common.MAX_COLLECTION_NAME_LENGTH
 import com.royaal.collections.ui.common.title
 import com.royaal.designsystem.components.bottomSheet.GGBottomSheetDialog
 import com.royaal.designsystem.components.button.GGButton
@@ -29,6 +29,8 @@ import ggdata.feature.collections.generated.resources.Res
 import ggdata.feature.collections.generated.resources.cancel
 import ggdata.feature.collections.generated.resources.create
 import ggdata.feature.collections.generated.resources.createHint
+import ggdata.feature.collections.generated.resources.createNameTaken
+import ggdata.feature.collections.generated.resources.createNameTooLong
 import ggdata.feature.collections.generated.resources.createOrAddStatus
 import ggdata.feature.collections.generated.resources.createTitle
 import org.jetbrains.compose.resources.stringResource
@@ -49,7 +51,12 @@ internal fun CreateCollectionDialog(
 ) {
     var name by rememberSaveable { mutableStateOf("") }
     val trimmedName = name.trim()
-    val error = collectionNameError(name, takenNames)
+    val error = when {
+        trimmedName.length > MAX_COLLECTION_NAME_LENGTH ->
+            stringResource(Res.string.createNameTooLong, MAX_COLLECTION_NAME_LENGTH)
+        trimmedName.lowercase() in takenNames -> stringResource(Res.string.createNameTaken)
+        else -> null
+    }
     val canCreate = trimmedName.isNotEmpty() && error == null
 
     GGBottomSheetDialog(

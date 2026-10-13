@@ -65,22 +65,6 @@ interface UserGameDao {
     @Transaction
     suspend fun setStatus(gameId: Long, status: PlayStatus?, now: Long) {
         val current = get(gameId) ?: UserGameEntity(gameId = gameId, updatedAt = now)
-        upsert(
-            current.copy(
-                status = status,
-                statusChangedAt = now,
-                updatedAt = now,
-                // The first start counts: picking a game back up isn't starting it again.
-                startedAt = current.startedAt ?: now.takeIf { status == PlayStatus.PLAYING },
-                completedAt = if (status == PlayStatus.COMPLETED) now else current.completedAt,
-            )
-        )
-    }
-
-    /** Sets the user's own numbers and words on a game; `null` clears them. */
-    @Transaction
-    suspend fun setJournalStats(gameId: Long, hoursPlayed: Int?, rating: Int?, note: String?, now: Long) {
-        val current = get(gameId) ?: UserGameEntity(gameId = gameId, updatedAt = now)
-        upsert(current.copy(hoursPlayed = hoursPlayed, rating = rating, note = note, updatedAt = now))
+        upsert(current.copy(status = status, statusChangedAt = now, updatedAt = now))
     }
 }

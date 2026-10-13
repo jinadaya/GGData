@@ -103,28 +103,3 @@ internal val MIGRATION_6_7 = object : Migration(6, 7) {
         )
     }
 }
-
-/**
- * The journal: the user's hours, rating and note on a game, and when it was started and completed,
- * for the stats. Games already playing or completed count from when they got that status.
- */
-internal val MIGRATION_7_8 = object : Migration(7, 8) {
-    override fun migrate(connection: SQLiteConnection) {
-        connection.execSQL("ALTER TABLE user_game ADD COLUMN `hoursPlayed` INTEGER")
-        connection.execSQL("ALTER TABLE user_game ADD COLUMN `rating` INTEGER")
-        connection.execSQL("ALTER TABLE user_game ADD COLUMN `note` TEXT")
-        connection.execSQL("ALTER TABLE user_game ADD COLUMN `startedAt` INTEGER")
-        connection.execSQL("ALTER TABLE user_game ADD COLUMN `completedAt` INTEGER")
-        connection.execSQL("UPDATE user_game SET startedAt = statusChangedAt WHERE status = 'PLAYING'")
-        connection.execSQL("UPDATE user_game SET completedAt = statusChangedAt WHERE status = 'COMPLETED'")
-    }
-}
-
-/** Games in a collection get the user's order: `position`, 0 for all until they're moved. */
-internal val MIGRATION_8_9 = object : Migration(8, 9) {
-    override fun migrate(connection: SQLiteConnection) {
-        connection.execSQL(
-            "ALTER TABLE game_collection_cross_ref ADD COLUMN `position` INTEGER NOT NULL DEFAULT 0"
-        )
-    }
-}

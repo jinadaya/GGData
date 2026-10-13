@@ -16,6 +16,4 @@
     <string name="statusDropped">Dropped</string>
     <string name="close">Close</string>
     <string name="addToLibrary">Add to library</string>
-    <string name="loadFailed">Couldn't load. Check your connection.</string>
-    <string name="retry">Retry</string>
 </resources>

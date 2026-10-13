@@ -75,8 +75,6 @@ kotlin {
                 implementation(project(":navigation"))
                 // The game screen and the add-to-library sheet
                 implementation(project(":feature:game"))
-                // The search button
-                implementation(project(":feature:search"))
                 // Routes of the collection screens main links to
                 implementation(project(":feature:collections"))
             }

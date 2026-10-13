@@ -52,7 +52,6 @@ import androidx.compose.ui.unit.dp
 import com.royaal.designsystem.icons.AppIcons
 import com.royaal.designsystem.theme.AppTheme
 import com.royaal.designsystem.theme.filterChipColors
-import com.royaal.designsystem.util.horizontalScrollHint
 import com.royaal.designsystem.util.pressScale
 
 private val ChipHeight = 32.dp
@@ -214,11 +213,9 @@ fun GGFilterChipRow(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     content: @Composable RowScope.() -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     Row(
         modifier = modifier
-            .horizontalScrollHint(scrollState)
-            .horizontalScroll(scrollState)
+            .horizontalScroll(rememberScrollState())
             .padding(contentPadding),
         horizontalArrangement = Arrangement.spacedBy(ChipRowSpacing),
         verticalAlignment = Alignment.CenterVertically,

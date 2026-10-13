@@ -574,10 +574,12 @@ private fun CompactGameCard(
                 onClick = { onRemoveClicked(game) },
                 type = GGIconButtonType.FLATTENED,
             )
-        } else if (onAddClicked != null) {
+        } else {
             GGIconButton(
                 imageVector = AppIcons.add,
-                onClick = { onAddClicked(game) },
+                onClick = {
+                    onAddClicked?.invoke(game)
+                },
                 type = GGIconButtonType.FLATTENED,
             )
         }

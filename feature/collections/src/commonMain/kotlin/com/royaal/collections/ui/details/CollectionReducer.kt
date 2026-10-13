@@ -15,7 +15,5 @@ internal class CollectionReducer : MviReducer<CollectionScreenState, CollectionI
             games = event.games,
             isLoading = false,
         )
-
-        is CollectionInnerEvent.UpdateOtherNames -> oldState.copy(otherNames = event.names)
     }
 }

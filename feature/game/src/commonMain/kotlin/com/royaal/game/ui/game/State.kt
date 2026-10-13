@@ -7,7 +7,6 @@ import com.royaal.arch.mvi.UserEvent
 import com.royaal.entities.data.CompanyData
 import com.royaal.entities.data.GamePlayStatus
 import com.royaal.entities.ui.UiGame
-import com.royaal.game.domain.GameScreenshot
 
 /**
  * A row of games under the details. Hidden once loaded empty.
@@ -25,28 +24,19 @@ internal data class GameRow(
 /**
  * @param statusSince when the status was set, formatted; `null` without a status.
  * @param collections names of the user's own collections the game is in.
- * @param rating the user's own, 1 to 10.
  */
 internal data class UiPlayerStats(
     val status: GamePlayStatus? = null,
     val statusSince: String? = null,
     val favourite: Boolean = false,
     val collections: List<String> = emptyList(),
-    val hoursPlayed: Int? = null,
-    val rating: Int? = null,
-    val note: String? = null,
 ) {
-    /** Has a status, is a favourite or is in a collection: the journal's numbers don't count. */
-    val isInLibrary: Boolean
-        get() = status != null || favourite || collections.isNotEmpty()
-
     val isEmpty: Boolean
-        get() = !isInLibrary && hoursPlayed == null && rating == null && note == null
+        get() = status == null && !favourite && collections.isEmpty()
 }
 
 /**
  * @param game `null` until loaded, from the cache or IGDB.
- * @param screenshots known once the game has come from IGDB.
  * @param isComplete the game has come from IGDB: the hero image, series and genre ids are known.
  * @param isLoadFailed IGDB couldn't be reached; whatever was cached stays shown.
  */
@@ -56,7 +46,6 @@ internal data class GameScreenState(
     val developer: CompanyData? = null,
     val publisher: CompanyData? = null,
     val heroImageUrl: String? = null,
-    val screenshots: List<GameScreenshot> = emptyList(),
     val seriesName: String? = null,
     val isComplete: Boolean = false,
     val isLoadFailed: Boolean = false,
@@ -84,7 +73,6 @@ internal sealed interface GameInnerEvent : InnerEvent {
         val developer: CompanyData?,
         val publisher: CompanyData?,
         val heroImageUrl: String?,
-        val screenshots: List<GameScreenshot>,
         val seriesName: String?,
         val isComplete: Boolean,
     ) : GameInnerEvent

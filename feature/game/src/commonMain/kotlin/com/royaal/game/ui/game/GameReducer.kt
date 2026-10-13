@@ -9,7 +9,6 @@ internal class GameReducer : MviReducer<GameScreenState, GameInnerEvent> {
             developer = event.developer,
             publisher = event.publisher,
             heroImageUrl = event.heroImageUrl,
-            screenshots = event.screenshots,
             seriesName = event.seriesName,
             isComplete = event.isComplete,
             isLoadFailed = false,

@@ -42,6 +42,9 @@ build/
 *.xccheckout
 *.moved-aside
 
+# CocoaPods (Ignore if you let Gradle handle it, keep if you manage pods manually)
+# **/iosApp/Pods/
+
 # ==========================================
 # 💻 IDEs (Android Studio, Fleet, VS Code)
 # ==========================================
@@ -81,23 +84,19 @@ captures/
 *.aab
 output-metadata.json
 
+# IntelliJ
+.idea/
+misc.xml
+deploymentTargetDropDown.xml
+render.experimental.xml
+
+# Google Services (e.g. APIs or Firebase)
+google-services.json
+
+# Android Profiling
+*.hprof
+
 *.klib
 **/*.klib
 
 Secrets.swift
-
-*.iml
-.gradle
-xcuserdata
-!src/**/build/
-local.properties
-.idea
-captures
-.externalNativeBuild
-.cxx
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcodeproj/xcshareddata/
-!*.xcodeproj/project.xcworkspace/
-!*.xcworkspace/contents.xcworkspacedata
-**/xcshareddata/WorkspaceSettings.xcsettings

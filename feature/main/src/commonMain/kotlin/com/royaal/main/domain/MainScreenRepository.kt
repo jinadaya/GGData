@@ -6,9 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 internal interface MainScreenRepository {
 
-    /** Whether the user has opened a game: [getLatestGame] loads it from the network, this is local. */
-    suspend fun hasLatestGame(): Boolean
-
     fun getLatestGame(): Flow<GameData>
 
     /**

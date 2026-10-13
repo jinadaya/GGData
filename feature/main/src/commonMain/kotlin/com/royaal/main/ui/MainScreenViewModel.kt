@@ -36,12 +36,10 @@ internal class MainScreenViewModel(
 ) {
 
     init {
-        subscription(FOR_YOU_KEY) {
-            bind(flow = repo.getLatestGame(), policy = { retryForever() }) {
-                val game = gameUiMapper.map(it)
-                MainInnerEvent.UpdateLatestGame(game)
-            }
+        intent(HAS_LATEST_GAME_KEY) {
+            emit(MainInnerEvent.UpdateHasLatestGame(repo.hasLatestGame()))
         }
+        loadLatestGame()
         subscription(BACKLOG_KEY) {
             bind(flow = repo.getBacklogGames(), policy = { retryForever() }) {
                 // A glance at what's next; "See all" opens the whole list.
@@ -67,13 +65,7 @@ internal class MainScreenViewModel(
                 MainInnerEvent.UpdateCollections(collections)
             }
         }
-        intent(GENRES_KEY) {
-            var genres = emptyList<UiGenre>()
-            policy(networkPolicy) {
-                genres = repo.getGenres().map(genreUiMapper::map)
-            }
-            emit(MainInnerEvent.UpdateGenres(genres))
-        }
+        loadGenres()
         loadRecommendations(genreId = null)
     }
 
@@ -88,6 +80,15 @@ internal class MainScreenViewModel(
             is MainUserEvent.GenreClicked -> {
                 val genreId = event.genreId.takeIf { it != state.value.selectedGenreId }
                 loadRecommendations(genreId)
+            }
+
+            MainUserEvent.RetryLatestGame -> {
+                if (state.value.isLatestGameFailed) loadLatestGame()
+            }
+
+            MainUserEvent.RetryRecommendations -> {
+                if (state.value.isGenresFailed) loadGenres()
+                if (state.value.isRecommendationsFailed) loadRecommendations(state.value.selectedGenreId)
             }
 
             is MainUserEvent.AddGameToFavClicked -> intent(MainUserEvent.AddGameToFavClicked::class) {
@@ -121,6 +122,35 @@ internal class MainScreenViewModel(
         }
     }
 
+    /** Restarts with the same key: Retry replaces a failed load. */
+    private fun loadLatestGame() = subscription(FOR_YOU_KEY) {
+        launch {
+            emit(MainInnerEvent.LoadLatestGame)
+            var isFailed = false
+            var isFound = false
+            policy({ networkPolicy(this); catch { isFailed = true } }) {
+                repo.getLatestGame().collect {
+                    isFound = true
+                    emit(MainInnerEvent.UpdateLatestGame(gameUiMapper.map(it)))
+                }
+            }
+            when {
+                isFailed -> emit(MainInnerEvent.LatestGameFailed)
+                // Not on IGDB anymore: as if no game was opened.
+                !isFound -> emit(MainInnerEvent.UpdateHasLatestGame(false))
+            }
+        }
+    }
+
+    private fun loadGenres() = intent(GENRES_KEY) {
+        emit(MainInnerEvent.LoadGenres)
+        var genres: List<UiGenre>? = null
+        policy(networkPolicy) {
+            genres = repo.getGenres().map(genreUiMapper::map)
+        }
+        emit(genres?.let(MainInnerEvent::UpdateGenres) ?: MainInnerEvent.GenresFailed)
+    }
+
     /** Shares the key with every other load, so the latest selection always wins. */
     private fun loadRecommendations(genreId: Long?) = intent(RECOMMENDATIONS_KEY) {
         repo.getCachedRecommendations(genreId)?.let { cached ->
@@ -128,17 +158,21 @@ internal class MainScreenViewModel(
             return@intent
         }
         emit(MainInnerEvent.SelectGenre(genreId))
-        var games = emptyList<UiGame>()
+        var games: List<UiGame>? = null
         policy(networkPolicy) {
             games = repo.getRecommendations(genreId).map(gameUiMapper::map)
         }
-        emit(MainInnerEvent.UpdateRecommendations(genreId, games))
+        emit(
+            games?.let { MainInnerEvent.UpdateRecommendations(genreId, it) }
+                ?: MainInnerEvent.RecommendationsFailed(genreId),
+        )
     }
 
     private companion object {
         const val GENRES_KEY = "Genres"
         const val RECOMMENDATIONS_KEY = "Recommendations"
         const val DIALOG_KEY = "Dialog"
+        private const val HAS_LATEST_GAME_KEY = "HasLatestGame"
         private const val FOR_YOU_KEY = "ForYou"
         private const val BACKLOG_KEY = "Backlog"
         private const val COLLECTIONS_KEY = "Collections"

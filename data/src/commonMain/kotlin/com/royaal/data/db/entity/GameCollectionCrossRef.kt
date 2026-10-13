@@ -1,5 +1,6 @@
 package com.royaal.data.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
@@ -7,6 +8,9 @@ import com.royaal.data.db.GameCollectionEntity
 import com.royaal.data.db.GameEntity
 
 /**
+ * @param position where the user has put the game in the collection, from 0 at the top. New games
+ *   get 0 and go on top of equal positions: those are ordered newest first by [addedAt].
+ *
  * Many-to-many membership: a [com.royaal.data.db.GameEntity] can be in several [com.royaal.data.db.GameCollectionEntity]s, or in none
  * (absence of a row here is what "outside any collection" means).
  */
@@ -33,4 +37,5 @@ data class GameCollectionCrossRef(
     val gameId: Long,
     val collectionId: Long,
     val addedAt: Long,
+    @ColumnInfo(defaultValue = "0") val position: Int = 0,
 )

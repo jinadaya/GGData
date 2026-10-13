@@ -9,6 +9,8 @@ import com.royaal.collections.navigation.StatusCollectionRoute
 import com.royaal.entities.data.GamePlayStatus
 import com.royaal.entities.ui.UiGame
 import ggdata.feature.collections.generated.resources.Res
+import ggdata.feature.collections.generated.resources.createNameTaken
+import ggdata.feature.collections.generated.resources.createNameTooLong
 import ggdata.feature.collections.generated.resources.favourites
 import ggdata.feature.collections.generated.resources.statusBacklog
 import ggdata.feature.collections.generated.resources.statusCompleted
@@ -51,3 +53,19 @@ internal val CollectionKey.route: NavKey
 
 /** Longer names don't fit a collection card anyway. */
 internal const val MAX_COLLECTION_NAME_LENGTH = 40
+
+/**
+ * Why [name] can't name a collection, `null` if it can (or is empty: there's nothing to say yet).
+ *
+ * @param takenNames lowercased names of the user's other collections.
+ */
+@Composable
+internal fun collectionNameError(name: String, takenNames: Set<String>): String? {
+    val trimmedName = name.trim()
+    return when {
+        trimmedName.length > MAX_COLLECTION_NAME_LENGTH ->
+            stringResource(Res.string.createNameTooLong, MAX_COLLECTION_NAME_LENGTH)
+        trimmedName.lowercase() in takenNames -> stringResource(Res.string.createNameTaken)
+        else -> null
+    }
+}

@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="arch">
+    <output-path>$PROJECT_DIR$/arch/build/libs</output-path>
+    <root id="archive" name="arch.jar">
+      <element id="module-output" name="GGData.arch.androidMain" />
+    </root>
+  </artifact>
+</component>

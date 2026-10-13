@@ -1,0 +1,45 @@
+<resources>
+    <!-- Add to library -->
+    <string name="addTitle">Add to library</string>
+    <string name="addStatus">Status</string>
+    <string name="addCollections">Collections</string>
+    <string name="addNoCollections">No collections of your own yet. Create them on the Collections tab.</string>
+    <string name="favourite">Favourite</string>
+    <string name="statusBacklog">Backlog</string>
+    <string name="statusPlaying">Playing</string>
+    <string name="statusCompleted">Completed</string>
+    <string name="statusDropped">Dropped</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="saved">%1$s saved to your library</string>
+
+    <!-- Game -->
+    <string name="addToLibrary">Add to library</string>
+    <string name="editInLibrary">In library · %1$s</string>
+    <string name="editInLibraryNoStatus">In your library</string>
+    <string name="by">by %1$s</string>
+    <string name="publishedBy">Published by %1$s</string>
+    <string name="yourStats">Your stats</string>
+    <string name="statStatus">Status</string>
+    <string name="statSince">Since</string>
+    <string name="statFavourite">Favourite</string>
+    <string name="statFavouriteYes">Yes</string>
+    <string name="statCollections">In collections</string>
+    <string name="about">About</string>
+    <string name="factTimeToBeat">Time to beat</string>
+    <string name="factPlayers">Players</string>
+    <string name="factReleased">Released</string>
+    <string name="series">From the %1$s series</string>
+    <string name="seriesNoName">From the same series</string>
+    <string name="moreFrom">More from %1$s</string>
+    <string name="similar">Similar games</string>
+    <string name="seeAll">See all</string>
+    <string name="loadFailed">Couldn't load the game. Check your connection.</string>
+    <string name="retry">Retry</string>
+
+    <!-- Company -->
+    <string name="founded">Founded in %1$d</string>
+    <string name="developedGames">Games</string>
+    <string name="companyLoadFailed">Couldn't load the developer. Check your connection.</string>
+    <string name="noGames">No games found.</string>
+</resources>

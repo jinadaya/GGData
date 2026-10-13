@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="collections">
+    <output-path>$PROJECT_DIR$/feature/collections/build/libs</output-path>
+    <root id="archive" name="collections.jar">
+      <element id="module-output" name="GGData.feature.collections.androidMain" />
+    </root>
+  </artifact>
+</component>

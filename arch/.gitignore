@@ -78,3 +78,6 @@ Thumbs.db
 *.p12
 .env
 .env.*
+
+*.klib          <-- Add this line to block all Kotlin libraries
+**/*.klib       <-- Add this line just to be completely safe

@@ -1,0 +1,43 @@
+<resources>
+    <string name="collections">Collections</string>
+    <string name="newCollection">New</string>
+    <string name="pinned">Pinned</string>
+    <string name="allCollections">All collections</string>
+
+    <string name="favourites">Favourites</string>
+    <string name="statusBacklog">Backlog</string>
+    <string name="statusPlaying">Playing</string>
+    <string name="statusCompleted">Completed</string>
+    <string name="statusDropped">Dropped</string>
+
+    <string name="emptyTitle">No collections yet</string>
+    <string name="emptyDescription">Start with ready-made ones by status, or create your own.</string>
+    <string name="addStatusCollections">Add selected</string>
+    <string name="createOwn">Create your own</string>
+
+    <string name="createTitle">New collection</string>
+    <string name="createHint">Collection name</string>
+    <string name="createNameTaken">You already have a collection with this name</string>
+    <string name="createNameTooLong">Up to %1$d characters</string>
+    <string name="createOrAddStatus">Or add a ready-made one</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="favouritesDescription">Games you marked with ♥</string>
+    <string name="statusDescription">Games you marked as %1$s</string>
+    <string name="emptyCustomCollection">No games here yet. Add them from Search with +</string>
+    <string name="emptyMarkedCollection">Games you mark will show up here</string>
+
+    <string name="deleteTitle">Delete “%1$s”?</string>
+    <string name="deleteCustomText">The collection will be removed. The games stay in your library.</string>
+    <string name="deleteStatusText">The collection will be hidden. The games keep their status, and you can add it back any time.</string>
+    <string name="delete">Delete</string>
+
+    <string name="removed">Removed from %1$s</string>
+    <string name="undo">Undo</string>
+
+    <plurals name="gamesCount">
+        <item quantity="one">%1$d game</item>
+        <item quantity="other">%1$d games</item>
+    </plurals>
+</resources>

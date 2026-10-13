@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="search">
+    <output-path>$PROJECT_DIR$/feature/search/build/libs</output-path>
+    <root id="archive" name="search.jar">
+      <element id="module-output" name="GGData.feature.search.androidMain" />
+    </root>
+  </artifact>
+</component>

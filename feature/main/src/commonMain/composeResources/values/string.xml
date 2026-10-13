@@ -1,0 +1,19 @@
+<resources>
+    <string name="discover">Discover</string>
+    <string name="forYou">For you</string>
+    <string name="forYouDesc">Based on your last games.</string>
+    <string name="backlog">Up next in Backlog</string>
+    <string name="collections">Your collections</string>
+    <string name="start">Start with what you play</string>
+    <string name="startDesc">Pick a few genres and games you know. Discover fills in from there.</string>
+    <string name="whatYouLike">What you like?</string>
+    <string name="maybePlayed">Played any of these?</string>
+    <string name="maybePlayedDesc">Tap + to add a game to your Journal as played.</string>
+    <string name="seeAll">See all</string>
+    <string name="statusBacklog">Backlog</string>
+    <string name="statusPlaying">Playing</string>
+    <string name="statusCompleted">Completed</string>
+    <string name="statusDropped">Dropped</string>
+    <string name="close">Close</string>
+    <string name="addToLibrary">Add to library</string>
+</resources>

@@ -1,0 +1,83 @@
+# ==========================================
+# 📦 Gradle & Build Artifacts
+# ==========================================
+.gradle/
+**/build/
+build/
+*.bnd
+
+# ==========================================
+# 🤖 Android Specific
+# ==========================================
+*.apk
+*.aar
+*.ap_
+*.dex
+/local.properties
+/captures/
+.externalNativeBuild/
+.cxx/
+/output.json
+
+# ==========================================
+# 🍎 iOS / Xcode / Swift Package Manager
+# ==========================================
+# Build artifacts
+**/iosApp/DerivedData/
+**/iosApp/build/
+
+# User-specific settings (Crucial to ignore!)
+**/iosApp/*.xcodeproj/xcuserdata/
+**/iosApp/*.xcworkspace/xcuserdata/
+**/iosApp/*.xcodeproj/project.xcworkspace/xcuserdata/
+**/iosApp/.txt
+
+# Xcode internal & state files
+.mtl
+.dtors
+*.mode1v3
+*.mode2v3
+*.storyboardc
+*.nib
+*.xccheckout
+*.moved-aside
+
+# CocoaPods (Ignore if you let Gradle handle it, keep if you manage pods manually)
+# **/iosApp/Pods/
+
+# ==========================================
+# 💻 IDEs (Android Studio, Fleet, VS Code)
+# ==========================================
+# JetBrains / IntelliJ IDEA
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/libraries/
+.idea/shelf/
+.idea/nav/
+.idea/caches/
+
+# VS Code & Fleet
+.vscode/
+.fleet/
+
+# ==========================================
+# 🛠️ System & OS Files
+# ==========================================
+.DS_Store
+Thumbs.db
+*.log
+
+# ==========================================
+# 🔒 Secrets & Keystores (NEVER COMMIT)
+# ==========================================
+*.keystore
+*.jks
+*.p12
+.env
+.env.*
+
+*.klib          <-- Add this line to block all Kotlin libraries
+**/*.klib       <-- Add this line just to be completely safe

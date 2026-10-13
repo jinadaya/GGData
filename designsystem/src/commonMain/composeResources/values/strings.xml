@@ -1,0 +1,10 @@
+<resources>
+    <string name="timeToBeat">Length</string>
+    <string name="maxPlayers">Length</string>
+    <string name="releaseDate">Released</string>
+    <string name="addToCollection">Add to collection</string>
+    <plurals name="collectionCount">
+        <item quantity="one">%1$d game</item>
+        <item quantity="other">%1$d games</item>
+    </plurals>
+</resources>

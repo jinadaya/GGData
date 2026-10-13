@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="entities">
+    <output-path>$PROJECT_DIR$/entities/build/libs</output-path>
+    <root id="archive" name="entities.jar">
+      <element id="module-output" name="GGData.entities.androidMain" />
+    </root>
+  </artifact>
+</component>

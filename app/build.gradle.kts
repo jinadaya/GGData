@@ -1,7 +1,20 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
+}
+
+// IGDB credentials live in local.properties (gitignored), never in source. Android Studio only
+// ever rewrites the sdk.dir line in that file, so adding our own keys here is safe.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+val igdbClientId: String = localProperties.getProperty("IGDB_CLIENT_ID", "")
+val igdbClientSecret: String = localProperties.getProperty("IGDB_CLIENT_SECRET", "")
+if (igdbClientId.isBlank() || igdbClientSecret.isBlank()) {
+    logger.warn("IGDB_CLIENT_ID / IGDB_CLIENT_SECRET missing from local.properties - IGDB calls will fail with 401 until set.")
 }
 
 android {
@@ -18,6 +31,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "IGDB_CLIENT_ID", "\"$igdbClientId\"")
+        buildConfigField("String", "IGDB_CLIENT_SECRET", "\"$igdbClientSecret\"")
     }
 
     buildTypes {
@@ -33,6 +49,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -41,27 +58,11 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-
-    implementation(libs.bundles.compose)
-
-    // Room
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    // Dagger 2
-    implementation(libs.dagger)
-    ksp(libs.dagger.compiler)
-
-    // Retrofit / OkHttp
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
+    implementation(libs.androidx.activity.compose)
 
     // Coil
     implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
+    implementation(libs.coil.network.ktor3)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.core)
@@ -70,4 +71,11 @@ dependencies {
     // DEBUG
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Project - shared KMP UI/logic (Android + iOS), see :composeApp
+    implementation(project(":composeApp"))
+
+    // Koin bootstrap (initKoin) for the IGDB client, see :data's NetworkModule/AppKoin
+    implementation(project(":data"))
+    implementation(libs.koin.android)
 }

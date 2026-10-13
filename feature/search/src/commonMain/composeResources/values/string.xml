@@ -1,0 +1,7 @@
+<resources>
+    <string name="searchHint">Game title</string>
+    <string name="nothingFound">Nothing found</string>
+    <string name="remoteSearchFailed">Couldn't reach IGDB, showing saved games only</string>
+    <string name="emptyTitle">Find a game</string>
+    <string name="emptyDescription">Search by title, part of it or another name it's known by.</string>
+</resources>

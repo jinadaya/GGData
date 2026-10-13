@@ -95,3 +95,8 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+*.klib
+**/*.klib
+
+Secrets.swift

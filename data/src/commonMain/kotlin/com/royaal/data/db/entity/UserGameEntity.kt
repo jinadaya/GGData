@@ -17,6 +17,11 @@ enum class PlayStatus { BACKLOG, PLAYING, COMPLETED, DROPPED }
  * @param gameId IGDB game id, same as [com.royaal.data.db.GameEntity.id].
  * @param statusChangedAt epoch millis [status] was last changed, for ordering status lists.
  * @param updatedAt epoch millis this row was last written.
+ * @param hoursPlayed hours the user says they've put in.
+ * @param rating the user's own rating, 1 to 10.
+ * @param note the user's own words on the game.
+ * @param startedAt epoch millis the game was first set [PlayStatus.PLAYING], for the journal's stats.
+ * @param completedAt epoch millis the game was last set [PlayStatus.COMPLETED], for the journal's stats.
  */
 @Entity(
     tableName = "user_game",
@@ -28,4 +33,9 @@ data class UserGameEntity(
     val favourite: Boolean = false,
     val statusChangedAt: Long? = null,
     val updatedAt: Long,
+    val hoursPlayed: Int? = null,
+    val rating: Int? = null,
+    val note: String? = null,
+    val startedAt: Long? = null,
+    val completedAt: Long? = null,
 )

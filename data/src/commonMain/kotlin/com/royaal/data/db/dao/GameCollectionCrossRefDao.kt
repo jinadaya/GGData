@@ -19,8 +19,20 @@ interface GameCollectionCrossRefDao {
     @Query("DELETE FROM game_collection_cross_ref WHERE gameId = :gameId AND collectionId = :collectionId")
     suspend fun removeGameFromCollection(gameId: Long, collectionId: Long)
 
+    @Query("UPDATE game_collection_cross_ref SET position = :position WHERE gameId = :gameId AND collectionId = :collectionId")
+    suspend fun setPosition(gameId: Long, collectionId: Long, position: Int)
+
+    /** Puts the collection's games in the order of [gameIds], the first one on top. */
+    @Transaction
+    suspend fun setOrder(collectionId: Long, gameIds: List<Long>) {
+        gameIds.forEachIndexed { position, gameId -> setPosition(gameId, collectionId, position) }
+    }
+
     @Query("SELECT collectionId FROM game_collection_cross_ref WHERE gameId = :gameId")
     suspend fun getCollectionIds(gameId: Long): List<Long>
+
+    @Query("SELECT * FROM game_collection_cross_ref")
+    fun observeAll(): Flow<List<GameCollectionCrossRef>>
 
     @Query("SELECT collectionId FROM game_collection_cross_ref WHERE gameId = :gameId")
     fun observeCollectionIds(gameId: Long): Flow<List<Long>>

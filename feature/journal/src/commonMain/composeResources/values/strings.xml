@@ -1,0 +1,15 @@
+<resources>
+    <string name="journal">Journal</string>
+    <string name="thisMonth">This month</string>
+    <string name="thisYear">This year</string>
+    <string name="statStarted">Started</string>
+    <string name="statCompleted">Completed</string>
+    <string name="statDropped">Dropped</string>
+    <string name="statHours">Hours in finished games</string>
+    <string name="hours">%1$d h</string>
+    <string name="rating">%1$d/10</string>
+    <string name="noGamesWithStatus">No games here yet.</string>
+    <string name="emptyTitle">Your journal is empty</string>
+    <string name="emptyDescription">Give a game a status — playing, backlog, completed or dropped — and it shows up here. Log your hours, rate it and keep a note, and see what you played this month and this year.</string>
+    <string name="findGame">Find a game</string>
+</resources>

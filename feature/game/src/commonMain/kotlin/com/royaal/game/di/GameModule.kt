@@ -8,6 +8,7 @@ import com.royaal.game.ui.company.CompanyScreen
 import com.royaal.game.ui.company.CompanyViewModel
 import com.royaal.game.ui.game.GameScreen
 import com.royaal.game.ui.game.GameViewModel
+import com.royaal.game.ui.journal.JournalEntryViewModel
 import com.royaal.game.ui.library.LibraryViewModel
 import com.royaal.navigation.screen
 import org.koin.core.module.dsl.viewModel
@@ -19,6 +20,7 @@ val gameModule = module {
     viewModel { params -> GameViewModel(get(), params.get<Long>(), get()) }
     viewModel { params -> CompanyViewModel(get(), params.get<Long>(), get()) }
     viewModel { params -> LibraryViewModel(get(), params.get<Long>(), get()) }
+    viewModel { params -> JournalEntryViewModel(get(), params.get<Long>(), get()) }
     single<GameRepository> {
         GameRepositoryImpl(
             gameDao = get(),

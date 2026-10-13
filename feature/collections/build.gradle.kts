@@ -75,6 +75,8 @@ kotlin {
                 implementation(project(":navigation"))
                 // The game screen and the add-to-library sheet
                 implementation(project(":feature:game"))
+                // The search button
+                implementation(project(":feature:search"))
             }
         }
         iosMain

@@ -33,6 +33,11 @@ internal interface GameRepository {
     /** Remembers the game as the last one opened, for "For you" on Discover. */
     suspend fun setLastOpened(gameId: Long)
 
+    fun observeJournalEntry(gameId: Long): Flow<JournalEntry>
+
+    /** Sets the game's status, hours, rating and note at once; `null`s clear them. */
+    suspend fun saveJournalEntry(gameId: Long, entry: JournalEntry)
+
     fun observeLibraryEntry(gameId: Long): Flow<GameLibraryEntry>
 
     /** Sets the game's status and favourite, and leaves it in exactly [collectionIds]. */

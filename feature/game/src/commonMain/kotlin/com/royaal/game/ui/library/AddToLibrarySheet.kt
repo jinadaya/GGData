@@ -24,6 +24,7 @@ import com.royaal.designsystem.theme.textColors
 import com.royaal.entities.data.GamePlayStatus
 import com.royaal.entities.ui.UiGame
 import com.royaal.game.domain.GameLibraryEntry
+import com.royaal.game.ui.common.JournalStatuses
 import com.royaal.game.ui.common.title
 import ggdata.feature.game.generated.resources.Res
 import ggdata.feature.game.generated.resources.addCollections
@@ -101,7 +102,7 @@ fun AddToLibrarySheet(
             )
             val current = draft ?: return@Column
             Section(title = stringResource(Res.string.addStatus)) {
-                GamePlayStatus.entries.forEach { status ->
+                JournalStatuses.forEach { status ->
                     val selected = current.status == status
                     GGFilterChip(
                         text = stringResource(status.title),

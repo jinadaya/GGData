@@ -52,6 +52,8 @@ internal class MainScreenRepositoryImpl(
     private val recommendationsCache = ExpiringCache<Long?, List<GameData>>(ttl = CACHE_TTL)
     private val genresCache = ExpiringCache<Unit, List<GenreData>>(ttl = CACHE_TTL)
 
+    override suspend fun hasLatestGame(): Boolean = lastOpenedGameStorage.load() != null
+
     override fun getLatestGame(): Flow<GameData> = flow {
         val gameId = lastOpenedGameStorage.load() ?: return@flow
         val timeToBeat = client.typed.gameTimeToBeats.first {

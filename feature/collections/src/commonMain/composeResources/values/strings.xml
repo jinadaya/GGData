@@ -33,6 +33,12 @@
     <string name="deleteStatusText">The collection will be hidden. The games keep their status, and you can add it back any time.</string>
     <string name="delete">Delete</string>
 
+    <string name="renameTitle">Rename collection</string>
+    <string name="rename">Rename</string>
+    <string name="save">Save</string>
+    <string name="done">Done</string>
+    <string name="reorderHint">Drag ≡ to change the order.</string>
+
     <string name="removed">Removed from %1$s</string>
     <string name="undo">Undo</string>
 

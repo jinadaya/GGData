@@ -21,7 +21,7 @@ import com.royaal.data.db.entity.UserGameEntity
         UserGameEntity::class,
         GameFtsEntity::class,
     ],
-    version = 7,
+    version = 9,
     exportSchema = true,
 )
 @ConstructedBy(AppDatabaseConstructor::class)

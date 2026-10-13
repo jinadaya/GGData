@@ -63,7 +63,9 @@ import com.royaal.designsystem.uikit.SkeletonGameCoverCard
 import com.royaal.designsystem.uikit.Title
 import com.royaal.designsystem.util.BasePreview
 import com.royaal.designsystem.util.TextUtils
+import com.royaal.designsystem.util.animatedItem
 import com.royaal.designsystem.util.click
+import com.royaal.designsystem.util.horizontalScrollHint
 import com.royaal.entities.data.CompanyData
 import com.royaal.entities.data.GamePlayStatus
 import com.royaal.entities.ui.UiGame
@@ -71,6 +73,8 @@ import com.royaal.entities.ui.testGame
 import com.royaal.game.navigation.CompanyRoute
 import com.royaal.game.navigation.GameRoute
 import com.royaal.game.ui.common.title
+import com.royaal.game.ui.journal.JournalEntrySheet
+import com.royaal.game.ui.journal.rememberJournalSavedSnackbar
 import com.royaal.game.ui.library.AddToLibrarySheet
 import com.royaal.game.ui.library.rememberLibrarySavedSnackbar
 import com.royaal.navigation.LocalNavigator
@@ -78,6 +82,7 @@ import ggdata.feature.game.generated.resources.Res
 import ggdata.feature.game.generated.resources.about
 import ggdata.feature.game.generated.resources.addToLibrary
 import ggdata.feature.game.generated.resources.by
+import ggdata.feature.game.generated.resources.edit
 import ggdata.feature.game.generated.resources.editInLibrary
 import ggdata.feature.game.generated.resources.editInLibraryNoStatus
 import ggdata.feature.game.generated.resources.factPlayers
@@ -94,6 +99,10 @@ import ggdata.feature.game.generated.resources.similar
 import ggdata.feature.game.generated.resources.statCollections
 import ggdata.feature.game.generated.resources.statFavourite
 import ggdata.feature.game.generated.resources.statFavouriteYes
+import ggdata.feature.game.generated.resources.statHours
+import ggdata.feature.game.generated.resources.statNote
+import ggdata.feature.game.generated.resources.statRating
+import ggdata.feature.game.generated.resources.statRatingValue
 import ggdata.feature.game.generated.resources.statSince
 import ggdata.feature.game.generated.resources.statStatus
 import ggdata.feature.game.generated.resources.yourStats
@@ -111,6 +120,9 @@ internal fun GameScreen(gameId: Long) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val navigator = LocalNavigator.current
     var showAddSheet by rememberSaveable { mutableStateOf(false) }
+    var viewedScreenshot by rememberSaveable { mutableStateOf<Int?>(null) }
+    var showJournalSheet by rememberSaveable { mutableStateOf(false) }
+    val onJournalSaved = rememberJournalSavedSnackbar()
     val onSaved = rememberLibrarySavedSnackbar()
 
     EffectHandler(viewModel) { effect ->
@@ -128,7 +140,17 @@ internal fun GameScreen(gameId: Long) {
         onDeveloperClicked = { viewModel.sendEvent(GameUserEvent.DeveloperClicked) },
         onGameClicked = { viewModel.sendEvent(GameUserEvent.GameClicked(it.id)) },
         onRetryClicked = { viewModel.sendEvent(GameUserEvent.Retry) },
+        onScreenshotClicked = { viewedScreenshot = it },
+        onJournalClicked = { showJournalSheet = true },
     )
+
+    viewedScreenshot?.let { index ->
+        ScreenshotViewer(
+            screenshots = state.screenshots,
+            initialIndex = index.coerceIn(0, state.screenshots.lastIndex.coerceAtLeast(0)),
+            onDismissRequest = { viewedScreenshot = null },
+        )
+    }
 
     val game = state.game
     if (showAddSheet && game != null) {
@@ -136,6 +158,13 @@ internal fun GameScreen(gameId: Long) {
             game = game,
             onDismissRequest = { showAddSheet = false },
             onSaved = onSaved,
+        )
+    }
+    if (showJournalSheet && game != null) {
+        JournalEntrySheet(
+            game = game,
+            onDismissRequest = { showJournalSheet = false },
+            onSaved = onJournalSaved,
         )
     }
 }
@@ -149,6 +178,8 @@ private fun GameContent(
     onDeveloperClicked: () -> Unit,
     onGameClicked: (UiGame) -> Unit,
     onRetryClicked: () -> Unit,
+    onScreenshotClicked: (index: Int) -> Unit,
+    onJournalClicked: () -> Unit,
 ) {
     val game = state.game
     val anyRowLoading = state.series.isLoading || state.similar.isLoading || state.developerGames.isLoading
@@ -168,7 +199,7 @@ private fun GameContent(
             contentPadding = PaddingValues(bottom = bottomPadding + 24.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            item(key = "hero") {
+            animatedItem(key = "hero") {
                 Hero(game = game, heroImageUrl = state.heroImageUrl, shimmer = shimmer)
             }
             when {
@@ -181,13 +212,15 @@ private fun GameContent(
                     onDeveloperClicked = onDeveloperClicked,
                     onGameClicked = onGameClicked,
                     onRetryClicked = onRetryClicked,
+                    onScreenshotClicked = onScreenshotClicked,
+                    onJournalClicked = onJournalClicked,
                 )
 
-                state.isLoadFailed -> item(key = "failed") {
+                state.isLoadFailed -> animatedItem(key = "failed") {
                     LoadFailed(onRetryClicked = onRetryClicked)
                 }
 
-                shimmer != null -> item(key = "skeleton") {
+                shimmer != null -> animatedItem(key = "skeleton") {
                     DetailsSkeleton(shimmer)
                 }
             }
@@ -223,8 +256,10 @@ private fun LazyListScope.gameDetails(
     onDeveloperClicked: () -> Unit,
     onGameClicked: (UiGame) -> Unit,
     onRetryClicked: () -> Unit,
+    onScreenshotClicked: (index: Int) -> Unit,
+    onJournalClicked: () -> Unit,
 ) {
-    item(key = "header") {
+    animatedItem(key = "header") {
         Header(
             game = game,
             developer = state.developer,
@@ -232,10 +267,10 @@ private fun LazyListScope.gameDetails(
             onDeveloperClicked = onDeveloperClicked,
         )
     }
-    item(key = "tags") {
+    animatedItem(key = "tags") {
         Tags(game)
     }
-    item(key = "actions") {
+    animatedItem(key = "actions") {
         Actions(
             stats = state.stats,
             onAddClicked = onAddClicked,
@@ -243,20 +278,32 @@ private fun LazyListScope.gameDetails(
         )
     }
     if (!state.stats.isEmpty) {
-        item(key = "stats") {
-            PlayerStats(state.stats)
+        animatedItem(key = "stats") {
+            PlayerStats(state.stats, onEditClicked = onJournalClicked)
         }
     }
-    item(key = "facts") {
+    animatedItem(key = "facts") {
         Facts(game)
     }
+    // Only IGDB knows them: skeletons until it answers, nothing if it can't be reached.
+    val isScreenshotsLoading = !state.isComplete && !state.isLoadFailed && shimmer != null
+    if (state.screenshots.isNotEmpty() || isScreenshotsLoading) {
+        animatedItem(key = "screenshots") {
+            ScreenshotsRow(
+                screenshots = state.screenshots.takeIf { state.isComplete },
+                horizontalPadding = PaddingValues(horizontal = ScreenHorizontalPadding),
+                shimmer = shimmer,
+                onScreenshotClicked = onScreenshotClicked,
+            )
+        }
+    }
     if (game.description.isNotBlank()) {
-        item(key = "about") {
+        animatedItem(key = "about") {
             About(game.description)
         }
     }
     if (state.isLoadFailed) {
-        item(key = "failed") {
+        animatedItem(key = "failed") {
             LoadFailed(onRetryClicked = onRetryClicked)
         }
     }
@@ -408,13 +455,13 @@ private fun Actions(
             modifier = Modifier.weight(1f),
             text = when {
                 status != null -> stringResource(Res.string.editInLibrary, stringResource(status.title))
-                !stats.isEmpty -> stringResource(Res.string.editInLibraryNoStatus)
+                stats.isInLibrary -> stringResource(Res.string.editInLibraryNoStatus)
                 else -> stringResource(Res.string.addToLibrary)
             },
             onClick = onAddClicked,
             // Once it's in the library, the button edits rather than adds: a quieter one.
-            buttonType = if (stats.isEmpty) GGButtonType.NORMAL else GGButtonType.OUTLINED,
-            iconStart = if (stats.isEmpty) AppIcons.add else null,
+            buttonType = if (stats.isInLibrary) GGButtonType.OUTLINED else GGButtonType.NORMAL,
+            iconStart = if (stats.isInLibrary) null else AppIcons.add,
         )
         GGIconButton(
             imageVector = AppIcons.favorite,
@@ -426,8 +473,23 @@ private fun Actions(
 }
 
 @Composable
-private fun PlayerStats(stats: UiPlayerStats) {
-    Section(title = stringResource(Res.string.yourStats)) {
+private fun PlayerStats(stats: UiPlayerStats, onEditClicked: () -> Unit) {
+    Column(
+        modifier = Modifier.padding(horizontal = ScreenHorizontalPadding),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = stringResource(Res.string.yourStats),
+                style = AppTheme.typography.headlineMedium,
+            )
+            GGButton(
+                text = stringResource(Res.string.edit),
+                onClick = onEditClicked,
+                buttonType = GGButtonType.OUTLINED,
+            )
+        }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             stats.status?.let { StatRow(stringResource(Res.string.statStatus), stringResource(it.title)) }
             stats.statusSince?.let { StatRow(stringResource(Res.string.statSince), it) }
@@ -437,6 +499,9 @@ private fun PlayerStats(stats: UiPlayerStats) {
             if (stats.collections.isNotEmpty()) {
                 StatRow(stringResource(Res.string.statCollections), stats.collections.joinToString(", "))
             }
+            stats.hoursPlayed?.let { StatRow(stringResource(Res.string.statHours), TextUtils.formatHours(it)) }
+            stats.rating?.let { StatRow(stringResource(Res.string.statRating), stringResource(Res.string.statRatingValue, it)) }
+            stats.note?.let { StatRow(stringResource(Res.string.statNote), it) }
         }
     }
 }
@@ -511,7 +576,7 @@ private fun LazyListScope.gameRow(
     onSeeAllClicked: (() -> Unit)? = null,
 ) {
     if (!row.isVisible) return
-    item(key = key) {
+    animatedItem(key = key) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Row(
                 modifier = Modifier
@@ -534,17 +599,20 @@ private fun LazyListScope.gameRow(
                     )
                 }
             }
+            val listState = rememberLazyListState()
             LazyRow(
+                modifier = Modifier.horizontalScrollHint(listState, nudge = !row.isLoading),
+                state = listState,
                 contentPadding = PaddingValues(horizontal = ScreenHorizontalPadding),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 if (row.isLoading && shimmer != null) {
                     items(count = SKELETON_ROW_CARDS, key = { "skeleton$it" }) {
-                        SkeletonGameCoverCard(shimmer = shimmer)
+                        SkeletonGameCoverCard(modifier = Modifier.animateItem(), shimmer = shimmer)
                     }
                 } else {
                     items(items = row.games, key = { it.id }) { game ->
-                        GameCoverCard(game = game, onClick = onGameClicked)
+                        GameCoverCard(modifier = Modifier.animateItem(), game = game, onClick = onGameClicked)
                     }
                 }
             }
@@ -612,5 +680,7 @@ private fun Preview() = BasePreview {
         onDeveloperClicked = {},
         onGameClicked = {},
         onRetryClicked = {},
+        onScreenshotClicked = {},
+        onJournalClicked = {},
     )
 }

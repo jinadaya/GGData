@@ -11,22 +11,36 @@ import com.royaal.entities.ui.UiGenre
 
 internal data class MainScreenState(
     val title: String = "",
+    /** Whether the user has opened a game, `null` until known; [latestGame] loads from the network after. */
+    val hasLatestGame: Boolean? = null,
     val latestGame: UiGame? = null,
+    val isLatestGameFailed: Boolean = false,
     val backlogGames: List<UiGame> = emptyList(),
+    val isBacklogLoaded: Boolean = false,
     val collections: List<UiGameCollectionWithUiGames> = emptyList(),
+    val isCollectionsLoaded: Boolean = false,
     val genres: List<UiGenre> = emptyList(),
     /** Genre [recommendations] are filtered by; `null` for the most popular games of any genre. */
     val selectedGenreId: Long? = null,
     val recommendations: List<UiGame> = emptyList(),
     val isGenresLoading: Boolean = true,
     val isRecommendationsLoading: Boolean = true,
+    val isGenresFailed: Boolean = false,
+    val isRecommendationsFailed: Boolean = false,
     /** Shown in the add-to-library sheet. */
     val addingGame: UiGame? = null,
     /** Shown in the details dialog. */
     val detailsGame: UiGame? = null,
 ) : ScreenState {
+    /** Until the local library is read, it's unknown whether to show it or the onboarding. */
+    val isLibraryLoading: Boolean
+        get() = hasLatestGame == null || !isBacklogLoaded || !isCollectionsLoaded
+
     val isEmptyState: Boolean
-        get() = latestGame == null && backlogGames.isEmpty() && collections.isEmpty()
+        get() = !isLibraryLoading && hasLatestGame == false && backlogGames.isEmpty() && collections.isEmpty()
+
+    val isLatestGameLoading: Boolean
+        get() = hasLatestGame == true && latestGame == null && !isLatestGameFailed
 }
 
 /**
@@ -44,6 +58,12 @@ internal sealed interface MainUserEvent : UserEvent {
 
     /** Selects the genre, or deselects it if it's already selected. */
     data class GenreClicked(val genreId: Long) : MainUserEvent
+
+    /** Loads For You again after it failed. */
+    data object RetryLatestGame : MainUserEvent
+
+    /** Loads again what failed in the onboarding: genres, recommendations or both. */
+    data object RetryRecommendations : MainUserEvent
     data class AddGameToFavClicked(val game: UiGame) : MainUserEvent
 
     /** "+" on a card: opens the add dialog. */
@@ -74,10 +94,16 @@ internal sealed interface NavDestination {
 }
 
 internal sealed interface MainInnerEvent : InnerEvent {
+    data class UpdateHasLatestGame(val hasLatestGame: Boolean) : MainInnerEvent
     data class UpdateLatestGame(val game: UiGame) : MainInnerEvent
+    data object LoadLatestGame : MainInnerEvent
+    data object LatestGameFailed : MainInnerEvent
     data class UpdateBacklogGames(val games: List<UiGame>) : MainInnerEvent
     data class UpdateCollections(val collections: List<UiGameCollectionWithUiGames>) : MainInnerEvent
     data class UpdateGenres(val genres: List<UiGenre>) : MainInnerEvent
+    data object LoadGenres : MainInnerEvent
+    data object GenresFailed : MainInnerEvent
+    data class RecommendationsFailed(val genreId: Long?) : MainInnerEvent
     data class SelectGenre(val genreId: Long?) : MainInnerEvent
 
     /** Also selects [genreId]: games cached for it are shown at once, with no loading in between. */

@@ -33,16 +33,19 @@ import com.royaal.game.domain.CompanyDetails
 import com.royaal.game.domain.GameDetails
 import com.royaal.game.domain.GameLibraryEntry
 import com.royaal.game.domain.GameRepository
+import com.royaal.game.domain.GameScreenshot
+import com.royaal.game.domain.JournalEntry
 import com.royaal.game.domain.LibraryCollection
 import com.royaal.game.domain.PlayerStats
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
-import kotlin.time.Instant
 
 internal class GameRepositoryImpl(
     private val gameDao: GameDao,
@@ -151,7 +154,29 @@ internal class GameRepositoryImpl(
             collections = collections
                 .filter { it.status == null && it.id in gameCollectionIds }
                 .map { it.name },
+            hoursPlayed = userGame?.hoursPlayed,
+            rating = userGame?.rating,
+            note = userGame?.note,
         )
+    }
+
+    override fun observeJournalEntry(gameId: Long): Flow<JournalEntry> =
+        userGameDao.observe(gameId).map { userGame ->
+            JournalEntry(
+                status = userGame?.status?.let(playStatusMapper::map),
+                hoursPlayed = userGame?.hoursPlayed,
+                rating = userGame?.rating,
+                note = userGame?.note,
+            )
+        }
+
+    override suspend fun saveJournalEntry(gameId: Long, entry: JournalEntry) {
+        val now = Clock.System.now().toEpochMilliseconds()
+        val current = userGameDao.get(gameId)
+        val playStatus = entry.status?.toPlayStatus()
+        // Only if it changed: re-setting the status would move the game to the top of its list.
+        if (current?.status != playStatus) userGameDao.setStatus(gameId, playStatus, now)
+        userGameDao.setJournalStats(gameId, entry.hoursPlayed, entry.rating, entry.note, now)
     }
 
     override suspend fun setFavourite(gameId: Long, favourite: Boolean) =
@@ -225,6 +250,7 @@ internal class GameRepositoryImpl(
         developer = developer?.let { CompanyData(it.id, it.name) },
         publisher = publisher?.let { CompanyData(it.id, it.name) },
         heroImageUrl = null,
+        screenshots = emptyList(),
         seriesIds = emptyList(),
         seriesName = null,
         franchiseIds = emptyList(),
@@ -240,6 +266,12 @@ internal class GameRepositoryImpl(
             developer = game.developer,
             publisher = game.publisher,
             heroImageUrl = heroImageId?.let { IgdbMedia.imageUrl(it, IgdbImageSize.ScreenshotHuge) },
+            screenshots = screenshots.mapNotNull { it.imageId }.map { imageId ->
+                GameScreenshot(
+                    previewUrl = IgdbMedia.imageUrl(imageId, IgdbImageSize.ScreenshotBig),
+                    url = IgdbMedia.imageUrl(imageId, IgdbImageSize.Hd1080),
+                )
+            },
             seriesIds = collections.map { it.id },
             seriesName = collections.firstNotNullOfOrNull { it.name },
             franchiseIds = franchises.map { it.id },

@@ -37,17 +37,20 @@ interface GameCollectionDao {
     @Query("SELECT * FROM game_collection ORDER BY pinned DESC, createdAt")
     fun observeAllWithGames(): Flow<List<GameCollectionWithGames>>
 
-    /** Games added to a user-created collection, most recently added first. */
+    /** Games of a user-created collection in the user's order; ones never moved, newest first. */
     @Transaction
     @Query(
         """
         SELECT game.* FROM game
         INNER JOIN game_collection_cross_ref AS ref ON ref.gameId = game.id
         WHERE ref.collectionId = :collectionId
-        ORDER BY ref.addedAt DESC
+        ORDER BY ref.position, ref.addedAt DESC
         """
     )
     fun observeGames(collectionId: Long): Flow<List<GameWithCompanies>>
+
+    @Query("UPDATE game_collection SET name = :name WHERE id = :id")
+    suspend fun rename(id: Long, name: String)
 
     @Query("UPDATE game_collection SET pinned = :pinned WHERE id = :id")
     suspend fun setPinned(id: Long, pinned: Boolean)

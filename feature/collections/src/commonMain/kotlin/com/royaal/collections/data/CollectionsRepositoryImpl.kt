@@ -35,9 +35,16 @@ internal class CollectionsRepositoryImpl(
 
     override fun observeCollections(): Flow<List<CollectionSummary>> = combine(
         collectionDao.observeAllWithGames(),
+        crossRefDao.observeAll(),
         userGameDao.observeGamesWithAnyStatus(),
         userGameDao.observeFavouriteGames(),
-    ) { collections, gamesWithStatus, favourites ->
+    ) { collections, crossRefs, gamesWithStatus, favourites ->
+        // The relation brings games in no particular order; the cover shows the collection's first ones.
+        val indexByCollection = crossRefs.groupBy { it.collectionId }.mapValues { (_, refs) ->
+            refs.sortedWith(compareBy<GameCollectionCrossRef> { it.position }.thenByDescending { it.addedAt })
+                .withIndex()
+                .associate { (index, ref) -> ref.gameId to index }
+        }
         val gamesByStatus = gamesWithStatus.groupBy { it.userGame?.status }
         val favouritesSummary = summary(CollectionKey.Favourites, name = "", pinned = false, favourites)
         val userCollections = collections.map { (collection, games) ->
@@ -55,7 +62,9 @@ internal class CollectionsRepositoryImpl(
                     name = collection.name,
                     pinned = collection.pinned,
                     // The relation brings plain games; companies and user data aren't needed for a cover.
-                    games = games.map { GameWithCompanies(it, developer = null, publisher = null, userGame = null) },
+                    games = games
+                        .sortedBy { game -> indexByCollection[collection.id]?.get(game.id) ?: Int.MAX_VALUE }
+                        .map { GameWithCompanies(it, developer = null, publisher = null, userGame = null) },
                 )
             }
         }
@@ -121,6 +130,12 @@ internal class CollectionsRepositoryImpl(
     override suspend fun setPinned(collectionId: Long, pinned: Boolean) =
         collectionDao.setPinned(collectionId, pinned)
 
+    override suspend fun rename(collectionId: Long, name: String) =
+        collectionDao.rename(collectionId, name.trim())
+
+    override suspend fun reorder(collectionId: Long, gameIds: List<Long>) =
+        crossRefDao.setOrder(collectionId, gameIds)
+
     override suspend fun deleteCollection(collectionId: Long) =
         collectionDao.deleteById(collectionId)
 
@@ -137,7 +152,7 @@ internal class CollectionsRepositoryImpl(
 
         is CollectionKey.Custom -> crossRefDao.get(gameId, key.id)?.let { crossRef ->
             crossRefDao.removeGameFromCollection(gameId, key.id)
-            RemovedGame(key, gameId, addedAt = crossRef.addedAt)
+            RemovedGame(key, gameId, addedAt = crossRef.addedAt, position = crossRef.position)
         }
     }
 
@@ -150,6 +165,7 @@ internal class CollectionsRepositoryImpl(
                 collectionId = key.id,
                 // Back to where it was in the list, not to the top.
                 addedAt = removed.addedAt ?: now(),
+                position = removed.position,
             )
         )
     }

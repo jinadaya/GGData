@@ -10,7 +10,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val searchModule = module {
-    screen<SearchRoute> { SearchScreen() }
+    screen<SearchRoute>(showBottomBar = false) { SearchScreen() }
     single<SearchRepository> { SearchRepositoryImpl(get(), get()) }
     viewModel<SearchScreenViewModel> { SearchScreenViewModel(get(), get()) }
 }

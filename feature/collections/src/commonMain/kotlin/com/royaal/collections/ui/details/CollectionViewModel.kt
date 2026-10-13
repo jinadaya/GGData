@@ -3,10 +3,12 @@ package com.royaal.collections.ui.details
 import androidx.lifecycle.SavedStateHandle
 import com.royaal.arch.mvi.ScreenSnapshot
 import com.royaal.arch.mvi.SnapshotHandler
+import com.royaal.arch.mvi.model.intent.ext.retryForever
 import com.royaal.arch.mvi.viewmodel.MviViewModel
 import com.royaal.collections.domain.CollectionKey
 import com.royaal.collections.domain.CollectionsRepository
 import com.royaal.collections.domain.RemovedGame
+import com.royaal.collections.ui.common.MAX_COLLECTION_NAME_LENGTH
 import com.royaal.entities.Mapper
 import com.royaal.entities.data.GameData
 import com.royaal.entities.ui.UiGame
@@ -51,6 +53,17 @@ internal class CollectionViewModel(
                 }
             }
         }
+        if (key is CollectionKey.Custom) {
+            subscription(NAMES_KEY) {
+                bind(flow = repo.observeCollections(), policy = { retryForever() }) { collections ->
+                    CollectionInnerEvent.UpdateOtherNames(
+                        collections
+                            .filter { it.key is CollectionKey.Custom && it.key != key }
+                            .mapTo(mutableSetOf()) { it.name.lowercase() }
+                    )
+                }
+            }
+        }
     }
 
     override fun onEvent(event: CollectionUserEvent) {
@@ -71,6 +84,21 @@ internal class CollectionViewModel(
                 postEffect(CollectionSideEffect.ShowRemoved)
             }
 
+            is CollectionUserEvent.Rename -> intent(event) {
+                val collectionId = state.value.collectionId ?: return@intent
+                // The sheet validates too; this only guards against a bad name slipping through.
+                val name = event.name.trim()
+                val isValid = name.isNotEmpty() &&
+                    name.length <= MAX_COLLECTION_NAME_LENGTH &&
+                    name.lowercase() !in state.value.otherNames
+                if (isValid) repo.rename(collectionId, name)
+            }
+
+            is CollectionUserEvent.Reorder -> intent(event) {
+                val collectionId = state.value.collectionId ?: return@intent
+                repo.reorder(collectionId, event.gameIds)
+            }
+
             CollectionUserEvent.UndoRemove -> intent(event) {
                 val removed = lastRemoved ?: return@intent
                 lastRemoved = null
@@ -81,5 +109,6 @@ internal class CollectionViewModel(
 
     private companion object {
         const val COLLECTION_KEY = "Collection"
+        const val NAMES_KEY = "Names"
     }
 }

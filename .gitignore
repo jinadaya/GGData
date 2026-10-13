@@ -42,9 +42,6 @@ build/
 *.xccheckout
 *.moved-aside
 
-# CocoaPods (Ignore if you let Gradle handle it, keep if you manage pods manually)
-# **/iosApp/Pods/
-
 # ==========================================
 # 💻 IDEs (Android Studio, Fleet, VS Code)
 # ==========================================
@@ -78,6 +75,11 @@ Thumbs.db
 *.p12
 .env
 .env.*
+
+# Android Studio generated files and folders
+captures/
+*.aab
+output-metadata.json
 
 *.klib
 **/*.klib
